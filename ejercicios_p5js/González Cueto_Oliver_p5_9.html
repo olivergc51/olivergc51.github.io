@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+<body>
+<script>
+
+//Parametros del sol
+let xs, ys, ds
+//Parametros de mercurio
+let xm, ym, dm, Rm, w, A
+//Parametros de venus
+let xv, yv, dv, Rv
+//Parametros de la tierra
+let xt, yt, dt, Rt
+//Parametros de Marte
+let xM, yM, dM, RM
+//Parametros de Juiter
+let xj, yj, dj, Rj
+//Parametros de Saturno
+let xS, yS, dS, RS
+//Parametros de Urano
+let xu, yu, du, Ru
+//Parametros de Neptuno
+let xn, yn, dn, Rn
+//Parametros de la luna
+let xl, yl, dl, Rl
+
+function setup() {
+createCanvas(1800, 1800);
+background(0, 0, 30);
+
+//Valores de los praámetros del sol
+xs = width/2;
+ys = height/2;
+ds = width/15;
+
+//Valores de los parametros de mercurio
+A = random(0, 360); // Ángulo inicial mercurio
+dm = width*0.1;
+Rm = dm/2;
+w = 0.01; //radianes por cada frame
+
+//valores de losparametros de venus
+dv = width*0.2;
+Rv = dv/2;
+//valores de los parametros de la tierra
+dt = width*0.3;
+Rt = dt/2;
+//valores de los parametros de Marte
+dM = width*0.4;
+RM = dM/2;
+//valores de los parametros de Jupiter
+dj = width*0.5;
+Rj = dj/2;
+//valores de los parametros de Saturno
+dS = width*0.6;
+RS = dS/2;
+//valores de los parametros de Urano
+du = width*0.7;
+Ru = du/2;
+//valores de los parametros de Neptuno
+dn = width*0.8;
+Rn = dn/2;
+//valores de los parametros de laLuna
+dl = dt/6;
+Rl = dl/2;
+
+
+}
+function draw() {
+background(0, 0, 30);
+
+xm = xs+cos(A)*Rm;
+ym = ys+sin(A)*Rm;
+
+xv = xs+cos(0.9*A)*Rv;
+yv = ys+sin(0.9*A)*Rv;
+
+xt = xs+cos(0.8*A)*Rt;
+yt = ys+sin(0.8*A)*Rt;
+
+xM = xs+cos(0.7*A)*RM;
+yM = ys+sin(0.7*A)*RM;
+
+xj = xs+cos(0.6*A)*Rj;
+yj = ys+sin(0.6*A)*Rj;
+
+xS = xs+cos(0.5*A)*RS;
+yS = ys+sin(0.5*A)*RS;
+
+xu = xs+cos(0.4*A)*Ru;
+yu = ys+sin(0.4*A)*Ru;
+
+xn = xs+cos(0.3*A)*Rn;
+yn = ys+sin(0.3*A)*Rn;
+
+xl = xt+cos(10*A)*Rl;
+yl = yt+sin(10*A)*Rl;
+
+
+//sol
+fill(180, 180, 0);
+circle(xs, ys, ds);
+
+
+//orbita de mercurio
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dm);	
+fill(144 ,44,44);
+circle(xm, ym, ds/10);
+
+
+//orbita de venus
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dv);	
+fill(139, 107, 0);
+circle(xv, yv, ds*0.25);
+
+
+//orbita de la tierra
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dt);	
+fill(0, 0, 160);
+circle(xt, yt, ds*0.3);
+
+
+//orbita de Marte
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dM);	
+fill(140, 0, 0);
+circle(xM, yM, ds*0.4);
+
+//orbita de Jupiter
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dj);	
+fill(220, 174, 96);
+circle(xj, yj, ds*0.6);
+
+//orbita de Saturno
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dS);	
+fill(204, 187, 51);
+circle(xS, yS, ds*0.7);
+
+//orbita de Urano
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, du);	
+fill(0, 0, 210);
+circle(xu, yu, ds*0.5);
+
+//orbita de Neptuno
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xs, ys, dn);	
+fill(0, 0, 100);
+circle(xn, yn, ds*0.45);
+
+//orbita de Luna
+noFill();
+stroke(100);
+strokeWeight(2);
+circle(xt, yt, dl);	
+fill(150);
+circle(xl, yl, dt*0.02);
+
+//actualización de variables
+A = A + w;
+}
+</script>
+</body>
+</html>
