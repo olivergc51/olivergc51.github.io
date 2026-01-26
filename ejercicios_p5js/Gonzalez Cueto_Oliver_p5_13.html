@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+<body>
+<script>
+
+
+let xs, ys, ds, vs
+let xl, yl, dl, vl
+let dia, mes, año
+let xP, yP;        // posición del personaje
+let S;             // tamaño base del stickman
+let vP;            // velocidad horizontal (izq/der)
+
+let groundY;       // altura del suelo (coincide con tu rectángulo de suelo en T12)
+let vY;            // velocidad vertical del salto
+let jumpV;         // impulso del salto (valor negativo para subir)
+let g;             // gravedad (valor positivo para bajar)
+
+
+ function setup() {
+
+        createCanvas(1000, 600);
+
+        // Sol
+        dS = min(width, height) * 0.2;
+        rS = dS / 2;
+        xS = -rS;
+        yS = height / 4;
+        vS = width / 400;
+
+        // Luna
+        dL = dS * 0.5;
+        rL = dL / 2;
+        xL = -width - rL;
+        yL = height / 3;
+        vL = vS;
+
+        // Calendario 
+        dia = 18;
+        mes = 12;
+        año = 2025;
+		
+		// Suelo 
+        groundY = 0.80 * height;
+
+      // personaje: tamaño y posición inicial
+        S  = 0.12 * min(width, height);
+        xP = 0.25 * width;
+        yP = groundY;                 //  yP será la posición de los pies
+
+      // Movimiento horizontal
+        vP = width / 150;
+
+      // Salto (valores sencillos)
+       vY = 0;
+       jumpV = -0.030 * height;      // impulso hacia arriba
+       g = 0.0016 * height;          // aceleración hacia abajo (pequeña)
+	   
+	   // Dibujo del personaje
+	       
+		   // Tamaños derivados 
+		   rHead = 0.20 * S;
+           bodyL = 0.60 * S;
+           armL  = 0.45 * S;
+           legL  = 0.55 * S;
+		   
+		   
+      } 
+
+      function draw() {
+
+        // Cielo según la posición del Sol
+        if (xS <= width + rS) {
+          background(0, 0, 255); // Día
+        } else {
+          background(10);        // Noche
+        }
+
+        // Suelo
+        noStroke();
+        fill(20, 120, 40);
+        rect(0, height * 0.8, width, height * 0.2);
+
+        // Sol
+        noStroke();
+        fill(245, 234, 10);
+        circle(xS, yS, dS);
+
+        // Luna
+        noStroke();
+        fill(200);
+        circle(xL, yL, dL);
+
+        // Movimiento sincronizado
+        xS = xS + vS;
+        xL = xL + vL;
+
+        // Fin del día: el Sol completa su ciclo
+        if (xS > 2 * width + rS) {
+
+          // Reinicio posiciones
+          xS = -rS;
+          xL = -width - rL;
+
+          // Incremento del día
+          dia = dia + 1;
+
+          // Cambio de mes
+          if (dia > 30) {
+            dia = 1;
+            mes = mes + 1;
+          }
+
+          // Cambio de año
+          if (mes > 12) {
+            mes = 1;
+            año = año + 1;
+          }
+        }
+
+        //TEXTO DEL CALENDARIO 
+        noStroke();
+
+        // Color según día o noche
+        if (xS <= width + rS) {
+          fill(0);
+        } else {
+          fill(255);
+        }
+
+        textSize(20);
+        text("Fecha: (" + dia + ") (" + mes + ") (" + año + ")", 10, 20);
+		
+		// Movimientos del personaje 
+		
+		if (keyIsDown(LEFT_ARROW)) {
+        xP = xP - vP;
+        }
+		else if (keyIsDown(RIGHT_ARROW)) {
+        xP = xP + vP;
+        }
+		
+		     // Límite para que no salga del lienzo 
+		
+		     if (xP < 0) {
+             xP = 0;
+             }
+             if (xP > width) {
+             xP = width;
+             }
+
+        // Salto del personaje
+        vY = vY + g;
+        yP = yP + vY; 
+        
+        if (yP > groundY) { 
+        yP = groundY; 
+        vY = 0; 
+        }
+        
+        // Puntos clave 
+		   hipY = yP - legL;          // cadera por encima de los pies
+           shoulderY = hipY - bodyL;  // hombros por encima de la cadera
+           headY = shoulderY - rHead; // centro de la cabeza
+			 
+	    // Dibujo del personaje
+		stroke(255,40,0);
+        strokeWeight(0.06 * S);
+        noFill();
+
+          // Cabeza
+          circle(xP, headY, 2 * rHead);
+
+         // Tronco
+          line(xP, shoulderY, xP, hipY);
+
+         // Brazos (una línea horizontal + dos líneas hacia abajo)
+          line(xP - 0.25*S, shoulderY, xP + 0.25*S, shoulderY);
+          line(xP - 0.25*S, shoulderY, xP - 0.25*S, shoulderY + armL);
+          line(xP + 0.25*S, shoulderY, xP + 0.25*S, shoulderY + armL);
+
+         // Piernas
+          line(xP, hipY, xP - 0.18*S, yP);
+          line(xP, hipY, xP + 0.18*S, yP);
+      }
+	  
+	  function keyPressed() { 
+	  
+	  if (keyCode === UP_ARROW) {
+	  // Solo salta si esta el personaje en el Suelo
+	  if (yP === groundY) { 
+	  vY = jumpV; 
+	  }
+	 }
+	}
+
+    </script>
+  </body>
+</html>

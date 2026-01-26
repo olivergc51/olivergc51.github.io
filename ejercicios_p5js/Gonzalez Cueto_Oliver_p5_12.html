@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+<body>
+<script>
+
+
+let xs, ys, ds, vs
+let xl, yl, dl, vl
+let dia, mes, año
+
+function setup() {
+createCanvas(500, 500);
+background(44, 44, 180);
+
+ds = width/4;
+xs = -ds;
+ys = height/2;
+vs = width/300;
+
+
+dl = width/6;
+xl = -(width+ds+dl);
+yl = height/8;
+vl = vs;
+
+dia = 1
+mes = 1
+año = 2026
+
+
+}
+
+function draw() {
+background(44, 44, 200);
+if (xs>width+ds/2) {
+background(0, 0, 120) }
+
+
+
+fill(255, 210, 0);
+circle(xs, ys, ds);
+ if (xs>2*width+ds) {
+ xs = -ds/2}
+
+fill(200);
+circle(xl, yl, dl);
+if (xl>2*width+dl) {
+xl = -ds}
+
+
+
+textSize(20);
+
+ // Escribimos fíjate cómo se incluyen las variables dentro de un texto fijo. Esto te será útil en el examen.
+text("Fecha: (" + dia + ") (" + mes + ") (" + año + ")", 10, 20);
+
+
+if (xs > 2*width + 0.99*ds) {
+     dia = dia + 1}
+       // Incremento la variable día.
+     
+
+     // Reseteo día e incremento mes si me paso de 30 días
+      if (dia > 30) {
+	  dia = 1;    mes = mes + 1;   }
+
+      // Reseteo mes e incremento año si me paso de 12 meses
+      if (mes > 12) {
+	  mes = 1;    año = año + 1; }
+    
+
+
+xs = xs+vs
+xl = xl+vl
+ 
+}
+
+</script>
+</body>
+</html>
