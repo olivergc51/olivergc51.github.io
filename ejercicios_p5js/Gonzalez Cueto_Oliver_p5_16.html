@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+
+<body>
+<script>
+
+// Sol y luna
+let xS, yS, dS, rS, vS
+let xL, yL, dL, rL, vL
+
+// Calendario
+let dia, mes, año
+
+// Stickman
+let xP, yP, S, vP
+let groundY
+let vY, jumpV, g
+let headY, shoulderY, hipY
+let rHead, bodyL, armL, legL
+
+// Disparo
+let xD, yD, tD, vD
+let disparoActivo
+
+// Objetivo
+let xO, yO, wO, hO, vO
+
+// Puntos
+let puntos
+
+
+
+function setup() {
+  createCanvas(1000, 600)
+
+  // Sol
+  dS = min(width, height) * 0.2
+  rS = dS / 2
+  xS = -rS
+  yS = height / 4
+  vS = width / 400
+
+  // Luna
+  dL = dS * 0.5
+  rL = dL / 2
+  xL = -width - rL
+  yL = height / 3
+  vL = vS
+
+  // Calendario
+  dia = 18
+  mes = 12
+  año = 2025
+
+  // Suelo
+  groundY = height * 0.8
+
+  // Stickman
+  S = 0.12 * min(width, height)
+  xP = width * 0.25
+  yP = groundY
+  vP = width / 150
+
+  vY = 0
+  jumpV = -0.03 * height
+  g = 0.0016 * height
+
+  rHead = 0.20 * S
+  bodyL = 0.60 * S
+  armL = 0.45 * S
+  legL = 0.55 * S
+
+  // Disparo
+  tD = min(width, height) * 0.03
+  vD = height / 80
+  disparoActivo = false
+
+  // Objetivo
+  wO = width * 0.08
+  hO = height * 0.05
+  yO = height * 0.25
+  reiniciarObjetivo()
+
+  // Puntos
+  puntos = 0
+}
+
+
+
+function draw() {
+
+  // 1) Cielo día / noche
+  if (xS <= width + rS) {
+    background(0, 150, 255)
+  } else {
+    background(10)
+  }
+
+  // 2) Suelo
+  noStroke()
+  fill(20, 120, 40)
+  rect(0, groundY, width, height - groundY)
+
+  // 3) Dibujar sol y luna
+  dibujarSol()
+  dibujarLuna()
+
+  // 4) Mover sol y luna + calendario
+  xS += vS
+  xL += vL
+
+  if (xS > 2 * width + rS) {
+    xS = -rS
+    xL = -width - rL
+    dia++
+    if (dia > 30) { dia = 1; mes++ }
+    if (mes > 12) { mes = 1; año++ }
+  }
+
+  // 5) Mover objetivo
+  xO += vO
+  if (xO > width + wO || xO < -wO) {
+    reiniciarObjetivo()
+  }
+
+  // 6) Mover disparo
+  if (disparoActivo) {
+    yD -= vD
+    if (yD < 0) {
+      disparoActivo = false
+    }
+  }
+
+  // 7) Comprobar impacto
+  if (disparoActivo &&
+      xD > xO && xD < xO + wO &&
+      yD > yO && yD < yO + hO) {
+
+    puntos = puntos + 1
+    disparoActivo = false
+    reiniciarObjetivo()
+  }
+
+  // 8) Dibujar objetivo
+  dibujarObjetivo()
+
+  // 9) Dibujar disparo
+  if (disparoActivo) {
+    dibujarDisparo()
+  }
+
+  // 10) Lógica del stickman
+  actualizarStickman()
+
+  // 11) Dibujar stickman
+  dibujarStickman()
+
+  // 12) HUD
+  dibujarCalendario()
+  dibujarPuntos()
+}
+
+
+
+// LÓGICA
+
+function keyPressed() {
+
+  // Salto
+  if (keyCode === UP_ARROW && yP === groundY) {
+    vY = jumpV
+  }
+
+  // Disparo
+  if (key === ' ' && !disparoActivo) {
+    xD = xP
+    yD = shoulderY
+    disparoActivo = true
+  }
+}
+
+
+
+function actualizarStickman() {
+
+  if (keyIsDown(LEFT_ARROW)) xP -= vP
+  if (keyIsDown(RIGHT_ARROW)) xP += vP
+
+  xP = constrain(xP, 0, width)
+
+  vY += g
+  yP += vY
+  if (yP > groundY) {
+    yP = groundY
+    vY = 0
+  }
+
+  hipY = yP - legL
+  shoulderY = hipY - bodyL
+  headY = shoulderY - rHead
+}
+
+function reiniciarObjetivo() {
+  let dir = random([-1, 1])
+  vO = dir * random(width / 300, width / 150)
+  xO = dir === 1 ? -wO : width + wO
+}
+
+
+
+// DIBUJO
+
+function dibujarSol() {
+  noStroke()
+  fill(245, 234, 10)
+  circle(xS, yS, dS)
+}
+
+function dibujarLuna() {
+  noStroke()
+  fill(200)
+  circle(xL, yL, dL)
+}
+
+function dibujarObjetivo() {
+  fill(255, 0, 200)
+  rect(xO, yO, wO, hO, 10)
+}
+
+function dibujarDisparo() {
+  fill(230)
+  circle(xD, yD, tD)
+}
+
+function dibujarStickman() {
+  stroke(255, 40, 0)
+  strokeWeight(0.06 * S)
+  noFill()
+
+  circle(xP, headY, 2 * rHead)
+  line(xP, shoulderY, xP, hipY)
+
+  line(xP - 0.25 * S, shoulderY, xP + 0.25 * S, shoulderY)
+  line(xP - 0.25 * S, shoulderY, xP - 0.25 * S, shoulderY + armL)
+  line(xP + 0.25 * S, shoulderY, xP + 0.25 * S, shoulderY + armL)
+
+  line(xP, hipY, xP - 0.18 * S, yP)
+  line(xP, hipY, xP + 0.18 * S, yP)
+}
+
+function dibujarCalendario() {
+  noStroke()
+  fill(xS <= width + rS ? 0 : 255)
+  textSize(20)
+  text("Fecha: (" + dia + ") (" + mes + ") (" + año + ")", 10, 25)
+}
+
+function dibujarPuntos() {
+  noStroke()
+  fill(255)
+  textSize(20)
+  text("Puntos: " + puntos, 10, 50)
+}
+
+</script>
+</body>
+</html>
